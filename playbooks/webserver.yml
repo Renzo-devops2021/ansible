@@ -1,0 +1,32 @@
+---
+- name: "Installing apache webserver"
+  hosts: 192.168.0.83
+  vars:
+    pckg_name: nginx
+    html_message: "This is a 1st ngnix we created ever"
+    doc_root: /usr/share/nginx/html
+  become: yes
+  tasks:
+    - name: Install epel release repo
+      yum:
+        name: epel-release
+        state: present
+      when: pckg_name == "ngnix"
+
+    - name: installing a package
+      yum: 
+        name: "{{ pckg_name }}"
+        state: present
+
+    - name: start and enable a service
+      service:
+        state: started
+        name: "{{ pckg_name }}"
+        enabled: yes
+
+    - name: Add firewall rule
+      firewalld:
+        state: enabled
+        service: http
+        permamnent: yes
+        inmediate: yes
